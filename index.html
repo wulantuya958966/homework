@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			.wrap{
+				width: 800px;
+				height: 600px;
+				border: cyan solid 2px;
+				position: relative;
+			}
+			.box{
+				width: 150px;
+				height: 150px;
+				border: pink solid 1px;
+				position: absolute;
+			}
+			.active{
+				background: purple;
+			}
+		</style>
+	</head>
+	<body>
+		魔镜魔镜
+		<input type="text" />
+		<button class="add">添加</button>
+		
+		<div class="wrap">
+			
+		</div>
+	</body>
+	<script src="../../jquery/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(".add").click(function(){
+			if($("input").val()){
+				$.get("http://localhost:8080/add",{hope:$("input").val()},(res)=>{
+					show()
+				})
+			}else{
+				alert("没有哎")
+			}
+		})
+		show()
+		function show(){
+			$.get("http://localhost:8080/api",(res)=>{
+				let str=""
+				for (var i = 0; i < res.length; i++) {
+					str+=`
+					<div class="box">
+						<h4>${res[i].hope}</h4>
+						<p class="del" _id=${res[i]._id}>删除</p>
+						<input type="checkbox" class="ai" checked />
+					</div>
+					`
+				}
+				$(".wrap").html(str)
+				
+				$(".wrap>.box").each(function(index,item){
+					$(this).css({
+						left:rand(400,10),
+						top:rand(600,10)
+					})
+				})
+				
+				$(".wrap .box .ai").each(function(key,value){
+					console.log($(this).prop("checked"))
+					if($(this).prop("checked")==true){
+						$(value).addClass(".active")
+					}
+				})
+				
+			})
+		}
+		
+		$(".wrap").on("click",".del",function(){
+			let id=$(this).attr("_id")
+			$.get("http://localhost:8080/del",{id:id},(res)=>{
+				show()
+			})
+		})
+		
+
+
+
+
+
+//console.log($("span"))
+
+		
+		function rand(max,min){
+			return parseInt(Math.random()*(max-min)+min);//取最大值
+		}
+		
+		
+	</script>
+</html>
